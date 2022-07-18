@@ -2,7 +2,7 @@
 
 Helicopters have the potential to transform Mars exploration by providing a highly mobile platform for forward reconnaissance as an aid for ground-based systems. Ingenuity is a technology demonstration to test the first powered flight on Mars, launched in July 2020 (https://mars.nasa.gov/technology/helicopter/#). 
 
-The candidate should recreate a flight of the Ingenuity robot in the Mars environment using Unreal Engine 5 (https://www.unrealengine.com/en-US/unreal-engine-5). The deadline for this assignment is the face-to-face interview day, which will be appropriately notified in due time. During this interview the candidate will be asked to present in no more than 10 minutes all the developments made. Please also bring the Simulation files in a pendrive or upload them in a Cloud Storage system for sharing (amb@spaceapplications.com). The candidate is expected to pay attention to details; provide the highest visual accuracy as possible when compared to the real environment; a clear and documented presentation with modular and efficient algorithms; and a seamless integration of Blueprint Classes with C++ classes and the Level Blueprint. 
+The candidate should recreate a flight of the Ingenuity robot in the Mars environment using Unreal Engine 5 (https://www.unrealengine.com/en-US/unreal-engine-5). The deadline for this assignment is the face-to-face interview day, which will be appropriately notified in due time. During this interview the candidate will be asked to present in no more than 20 minutes all the developments made. The candidate is expected to pay attention to details; provide the highest visual accuracy as possible when compared to the real environment; a clear and documented presentation with modular and efficient algorithms; and a seamless integration of Blueprint Classes with C++ classes and the Level Blueprint. 
 
 We allow the use of 3rd party libraries or CAD models if needed. We also encourage to provide additional inputs to the required ones below to demonstrate your software skills.
 
@@ -28,8 +28,9 @@ The user should be able to swipe between the 3rd person view and the camera view
 
 (Optional) Other ideas
 ------------------------
-Ingenuity's flight dynamics do not need to be included in the simulation but it is considered as a very interesting asset if provided.
 
-It is interesting to provide winds that affect the navigation of Ingenuity during the flight...
+It would be interesting to provide winds that affect the navigation of Ingenuity during the flight.
 
 Ingenuity's batteries are powered based on the availability of sunlight and have limited resources...
+
+Ingenuity's flight dynamics do not need to be included in the simulation but it is considered as a very interesting asset if provided.
