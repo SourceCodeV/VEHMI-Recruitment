@@ -23,13 +23,17 @@ void AIngenuityControl::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!TransformPipe.IsEmpty() && counter < 1.0f) {
+		counter += DeltaTime;
+	}
+	else if (!TransformPipe.IsEmpty()) {
+		CalculateMovement();
+	}
 }
 
-void AIngenuityControl::SendNewPosition(FVector Position, float DeltaTime)
+void AIngenuityControl::SendNewPosition(FTransform Transform)
 {
-	if (counter < 1.0f && !AtSamePosition) {
-		counter
-	}
+	TransformPipe.Add(Transform);
 }
 
 void AIngenuityControl::SetAtSamePosition(bool inAtSamePosition) {
@@ -40,3 +44,14 @@ bool AIngenuityControl::GetAtSamePosition() {
 	return AtSamePosition;
 }
 
+void AIngenuityControl::CalculateMovement() {
+	SetActorTransform(TransformPipe[0]);
+	if (TransformPipe.Last().AreTranslationsEqual(GetTransform(), TransformPipe.Last())) {
+		AtSamePosition = true;
+		TransformPipe.Empty();
+		counter = 0.0f;
+	}
+	else {
+		TransformPipe.RemoveAt(0);
+	}
+}

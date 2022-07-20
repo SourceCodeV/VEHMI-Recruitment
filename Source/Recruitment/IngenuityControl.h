@@ -34,13 +34,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void CalculateMovement();
+
 	UFUNCTION(BlueprintCallable, Category="DroneCommunication")
-	void SendNewPosition(FVector Position, float DeltaTime);
+	void SendNewPosition(FTransform Transform);
+
 
 	UFUNCTION(BlueprintSetter)
 	void SetAtSamePosition(bool inAtSamePosition);
 
 	UFUNCTION(BlueprintGetter)
 		bool GetAtSamePosition();
+
 
 };
