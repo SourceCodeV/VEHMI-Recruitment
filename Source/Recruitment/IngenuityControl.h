@@ -22,19 +22,20 @@ protected:
 public:	
 	UPROPERTY(BluePrintGetter = GetAtSamePosition, BlueprintSetter = SetAtSamePosition)
 	bool AtSamePosition = true;
-
 	bool CounterStarted = false;
-
 	bool Reading = false;
-
 	float counter = 0.0f;
 
 	TArray<FTransform> TransformPipe;
+
+
+	UStaticMeshComponent* Meshcomp;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void CalculateMovement();
+	void CheckSamePosition();
 
 	UFUNCTION(BlueprintCallable, Category="DroneCommunication")
 	void SendNewPosition(FTransform Transform);
