@@ -31,6 +31,7 @@ void AIngenuityControl::Tick(float DeltaTime)
 	}
 	else if (!TransformPipe.IsEmpty()) {
 		CalculateMovement();
+		CheckLanding();
 	}
 }
 
@@ -39,12 +40,31 @@ void AIngenuityControl::SendNewPosition(FTransform Transform)
 	TransformPipe.Add(Transform);
 }
 
-void AIngenuityControl::SetGrounded(bool isGrounded) {
-	Grounded = isGrounded;
+void AIngenuityControl::TakeOff() {
+	float ownZ = MeshComp->GetComponentLocation().Z;
+	ExecuteVerticalControl(ownZ+1);
+	Grounded = false;
 }
 
 bool AIngenuityControl::GetGrounded() {
 	return Grounded;
+}
+
+void AIngenuityControl::SetGrounded(bool isGrounded) {
+	Grounded = isGrounded;
+}
+
+bool AIngenuityControl::GetLanding() {
+	return Landing;
+}
+
+void AIngenuityControl::SetLanding(bool isLanding) {
+	Landing = isLanding;
+}
+
+void AIngenuityControl::Rotate(float amount) {
+	Zrotation += amount;
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::SanitizeFloat(Zrotation));
 }
 
 void AIngenuityControl::CalculateMovement() {
@@ -52,23 +72,32 @@ void AIngenuityControl::CalculateMovement() {
 	float xTranslation = TransformPipe[0].GetTranslation().X;
 	float yTranslation = TransformPipe[0].GetTranslation().Y;
 	float zTranslation = TransformPipe[0].GetTranslation().Z;
+	float zRotation = TransformPipe[0].GetRotation().Z;
 	//Control craft horizontally and vertically
-	ExeCuteVerticalControl(zTranslation);
-	ExecuteHorizontalControl(xTranslation, yTranslation);
+	ExecuteVerticalControl(zTranslation);
+	ExecuteHorizontalControl(xTranslation, yTranslation, zRotation);
 	
 	TransformPipe.RemoveAt(0);
 }
 
-void AIngenuityControl::CheckGrounded() {
-	if (TransformPipe.Last().AreTranslationsEqual(GetTransform(), TransformPipe.Last())) {
-		Grounded = true;
-		TransformPipe.Empty();
-		counter = 0.0f;
+
+void AIngenuityControl::CheckLanding() {
+	if (Landing) {
+		FVector StartPoint = MeshComp->GetComponentLocation();
+		FVector EndPoint = StartPoint + FVector(0, 0, -5);
+		FHitResult result;
+		GetWorld()->LineTraceSingleByChannel(result, StartPoint, EndPoint, ECC_WorldStatic);
+		
+		if (result.IsValidBlockingHit()) {
+			SetGrounded(true);
+			SetDroneThrust(0);
+			TransformPipe.Empty();
+			SetLanding(false);
+		}
 	}
-	TransformPipe.RemoveAt(0);
 }
 
-void AIngenuityControl::ExeCuteVerticalControl(float zTransGoal) {
+void AIngenuityControl::ExecuteVerticalControl(float zTransGoal) {
 	float distanceSpeedConversion = 1 / 15;
 
 	float ownZ = MeshComp->GetComponentLocation().Z;
@@ -86,28 +115,27 @@ void AIngenuityControl::ExeCuteVerticalControl(float zTransGoal) {
 	SetDroneThrust(p);
 }
 
-void AIngenuityControl::ExecuteHorizontalControl(float xTransGoal, float yTransGoal) {
+void AIngenuityControl::ExecuteHorizontalControl(float xTransGoal, float yTransGoal, float zRotation) {
 	float kp = 1;
 	float po = 0;
 
 	float ownX = MeshComp->GetComponentLocation().X;
-	float xDist = xTransGoal - ownX;
+	float targetXVelocity = xTransGoal - ownX;
 
-	float targetXVelocity = xDist;
 	float ownXVelocity = MeshComp->GetComponentVelocity().X;
 	float xVelocityDiff = targetXVelocity - ownXVelocity;
 
-
 	float ownY = MeshComp->GetComponentLocation().Y;
-	float yDist = yTransGoal - ownY;
+	float targetYVelocity = yTransGoal - ownY;
 
-	float targetYVelocity = yDist;
 	float ownYVelocity = MeshComp->GetComponentVelocity().Y;
 	float yVelocityDiff = targetYVelocity - ownYVelocity;
+
 
 	float angleY = -kp * xVelocityDiff/5 + po;
 	float angleX = kp * yVelocityDiff/5 + po;
 
-	MeshComp->SetWorldRotation(FRotator(angleY, 0, angleX));
+	MeshComp->SetRelativeRotation(FRotator(0, zRotation * 360 / PI, 0));
+	MeshComp->AddWorldRotation(FRotator(angleY, 0, angleX));
 }
 

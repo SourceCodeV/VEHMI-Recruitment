@@ -21,8 +21,11 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	UPROPERTY(BluePrintGetter = GetGrounded, BlueprintSetter = SetGrounded)
+	UPROPERTY(BluePrintGetter = GetGrounded, BluePrintSetter = SetGrounded)
 	bool Grounded = true;
+	UPROPERTY(BluePrintGetter = GetLanding, BluePrintSetter = SetLanding)
+	bool Landing = false;
+	float Zrotation = 0.0f;
 	bool CounterStarted = false;
 	bool Reading = false;
 	float counter = 0.0f;
@@ -35,23 +38,34 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void CalculateMovement();
-	void CheckGrounded();
-	void ExeCuteVerticalControl(float zTransGoal);
-	void ExecuteHorizontalControl(float xTransGoal, float yTransGoal);
+	void CheckLanding();
+	void ExecuteVerticalControl(float zTransGoal);
+	void ExecuteHorizontalControl(float xTransGoal, float yTransGoal, float zRotation);
 
 	void ProportionalControl();
 
 	UFUNCTION(BlueprintCallable, Category="DroneCommunication")
 	void SendNewPosition(FTransform Transform);
 
+	UFUNCTION(BlueprintCallable, Category = "DroneControl")
+	void TakeOff();
+
+	UFUNCTION(BlueprintCallable, Category = "DroneControl")
+	void Rotate(float amount);
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "DroneControl")
 	void SetDroneThrust(float Thrust);
-
-	UFUNCTION(BlueprintSetter)
-	void SetGrounded(bool inAtSamePosition);
 
 	UFUNCTION(BlueprintGetter)
 	bool GetGrounded();
 
+	UFUNCTION(BlueprintSetter)
+	void SetGrounded(bool isGrounded);
+
+	UFUNCTION(BlueprintGetter)
+	bool GetLanding();
+
+	UFUNCTION(BlueprintSetter)
+	void SetLanding(bool isLanding);
 
 };
