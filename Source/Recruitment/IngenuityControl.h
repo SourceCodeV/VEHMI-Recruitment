@@ -21,8 +21,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	UPROPERTY(BluePrintGetter = GetAtSamePosition, BlueprintSetter = SetAtSamePosition)
-	bool AtSamePosition = true;
+	UPROPERTY(BluePrintGetter = GetGrounded, BlueprintSetter = SetGrounded)
+	bool Grounded = true;
 	bool CounterStarted = false;
 	bool Reading = false;
 	float counter = 0.0f;
@@ -35,9 +35,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void CalculateMovement();
-	void CheckSamePosition();
-	void CalculateVerticalForces(float zTransGoal);
-	void CalculateHorizontalForces(float xTransGoal, float yTransGoal);
+	void CheckGrounded();
+	void ExeCuteVerticalControl(float zTransGoal);
+	void ExecuteHorizontalControl(float xTransGoal, float yTransGoal);
 
 	void ProportionalControl();
 
@@ -48,10 +48,10 @@ public:
 	void SetDroneThrust(float Thrust);
 
 	UFUNCTION(BlueprintSetter)
-	void SetAtSamePosition(bool inAtSamePosition);
+	void SetGrounded(bool inAtSamePosition);
 
 	UFUNCTION(BlueprintGetter)
-	bool GetAtSamePosition();
+	bool GetGrounded();
 
 
 };

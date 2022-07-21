@@ -25,13 +25,12 @@ void AIngenuityControl::BeginPlay()
 void AIngenuityControl::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//CalculateMovement();
+
 	if (!TransformPipe.IsEmpty() && counter < 1.0f) {
 		counter += DeltaTime;
 	}
 	else if (!TransformPipe.IsEmpty()) {
 		CalculateMovement();
-		//CheckSamePosition();
 	}
 }
 
@@ -40,36 +39,36 @@ void AIngenuityControl::SendNewPosition(FTransform Transform)
 	TransformPipe.Add(Transform);
 }
 
-void AIngenuityControl::SetAtSamePosition(bool inAtSamePosition) {
-	AtSamePosition = inAtSamePosition;
+void AIngenuityControl::SetGrounded(bool isGrounded) {
+	Grounded = isGrounded;
 }
 
-bool AIngenuityControl::GetAtSamePosition() {
-	return AtSamePosition;
+bool AIngenuityControl::GetGrounded() {
+	return Grounded;
 }
 
 void AIngenuityControl::CalculateMovement() {
-	//Basic follow after one second set position
-
+	//Get the target positions
 	float xTranslation = TransformPipe[0].GetTranslation().X;
 	float yTranslation = TransformPipe[0].GetTranslation().Y;
 	float zTranslation = TransformPipe[0].GetTranslation().Z;
-	CalculateVerticalForces(zTranslation);
-	CalculateHorizontalForces(xTranslation, yTranslation);
+	//Control craft horizontally and vertically
+	ExeCuteVerticalControl(zTranslation);
+	ExecuteHorizontalControl(xTranslation, yTranslation);
 	
 	TransformPipe.RemoveAt(0);
 }
 
-void AIngenuityControl::CheckSamePosition() {
+void AIngenuityControl::CheckGrounded() {
 	if (TransformPipe.Last().AreTranslationsEqual(GetTransform(), TransformPipe.Last())) {
-		AtSamePosition = true;
+		Grounded = true;
 		TransformPipe.Empty();
 		counter = 0.0f;
 	}
 	TransformPipe.RemoveAt(0);
 }
 
-void AIngenuityControl::CalculateVerticalForces(float zTransGoal) {
+void AIngenuityControl::ExeCuteVerticalControl(float zTransGoal) {
 	float distanceSpeedConversion = 1 / 15;
 
 	float ownZ = MeshComp->GetComponentLocation().Z;
@@ -87,7 +86,7 @@ void AIngenuityControl::CalculateVerticalForces(float zTransGoal) {
 	SetDroneThrust(p);
 }
 
-void AIngenuityControl::CalculateHorizontalForces(float xTransGoal, float yTransGoal) {
+void AIngenuityControl::ExecuteHorizontalControl(float xTransGoal, float yTransGoal) {
 	float kp = 1;
 	float po = 0;
 
@@ -106,14 +105,9 @@ void AIngenuityControl::CalculateHorizontalForces(float xTransGoal, float yTrans
 	float ownYVelocity = MeshComp->GetComponentVelocity().Y;
 	float yVelocityDiff = targetYVelocity - ownYVelocity;
 
-	float angleY = -kp * xVelocityDiff/2.5 + po;
-	float angleX = kp * yVelocityDiff/2.5 + po;
+	float angleY = -kp * xVelocityDiff/5 + po;
+	float angleX = kp * yVelocityDiff/5 + po;
 
 	MeshComp->SetWorldRotation(FRotator(angleY, 0, angleX));
 }
 
-void AIngenuityControl::ProportionalControl() {
-	//Pout = Kp e(t) + p0
-	double Kp = 1;
-
-}
