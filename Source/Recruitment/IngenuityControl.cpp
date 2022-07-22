@@ -110,7 +110,6 @@ void AIngenuityControl::ExecuteVerticalControl(float zTransGoal) {
 	float po = 937.5;
 	float kp = 100;
 
-
 	float p = kp * velocityDiff + po;
 	SetDroneThrust(p);
 }
@@ -130,7 +129,6 @@ void AIngenuityControl::ExecuteHorizontalControl(float xTransGoal, float yTransG
 
 	float ownYVelocity = MeshComp->GetComponentVelocity().Y;
 	float yVelocityDiff = targetYVelocity - ownYVelocity;
-
 
 	float angleY = -kp * xVelocityDiff/5 + po;
 	float angleX = kp * yVelocityDiff/5 + po;
