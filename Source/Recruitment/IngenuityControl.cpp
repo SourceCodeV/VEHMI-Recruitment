@@ -64,7 +64,6 @@ void AIngenuityControl::SetLanding(bool isLanding) {
 
 void AIngenuityControl::Rotate(float amount) {
 	Zrotation += amount;
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::SanitizeFloat(Zrotation));
 }
 
 void AIngenuityControl::CalculateMovement() {
