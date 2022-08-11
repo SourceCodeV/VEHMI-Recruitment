@@ -132,7 +132,7 @@ void AIngenuityControl::ExecuteHorizontalControl(float xTransGoal, float yTransG
 	float angleY = -kp * xVelocityDiff/5 + po;
 	float angleX = kp * yVelocityDiff/5 + po;
 
-	MeshComp->SetRelativeRotation(FRotator(0, zRotation * 360 / PI, 0));
+	MeshComp->SetRelativeRotation(FRotator(0, zRotation * 180, 0));
 	MeshComp->AddWorldRotation(FRotator(angleY, 0, angleX));
 }
 
